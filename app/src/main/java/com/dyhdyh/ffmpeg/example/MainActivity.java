@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickStart(View view) {
-        File outputFile = new File(getExternalCacheDir(), "output.mp4");
+        File outputFile = new File(getExternalCacheDir(), "output.mp3");
         FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
     }
 
