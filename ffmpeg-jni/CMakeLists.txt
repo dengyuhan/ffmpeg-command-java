@@ -37,8 +37,7 @@ set_target_properties(
                 )
 
 include_directories(
-    #${PROJECT_SOURCE_DIR}/ffmpeg-3.3.7
-    /Users/dengyuhan/Downloads/ffmpeg-3.3.7
+    ${PROJECT_SOURCE_DIR}/ffmpeg-3.2.9
 
 )
 
