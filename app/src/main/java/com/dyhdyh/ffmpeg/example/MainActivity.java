@@ -25,8 +25,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickStart(View view) {
-        File outputFile = new File(getExternalCacheDir(), "output.yuv");
-        FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        File outputFile = new File(getExternalCacheDir(), "output.mp4");
+        //FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        FFmpegJNI.exec(new String[]{"ffmpeg",
+                "-ss", "00:00:00", "-t","00:00:04",
+                "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath()
+        });
         //FFmpegJNI.exec("ffmpeg", "-formats");
 
     }

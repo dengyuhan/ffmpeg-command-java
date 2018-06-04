@@ -9,11 +9,11 @@ extern "C" {
 #endif
 /*
  * Class:     com_dyhdyh_ffmpeg_FFmpegJNI
- * Method:    exec
- * Signature: ([Ljava/lang/String;)I
+ * Method:    nativeExec
+ * Signature: ([Ljava/lang/String;Lcom/dyhdyh/ffmpeg/OnFFmpegProgressListener;)I
  */
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpeg_FFmpegJNI_nativeExec
-  (JNIEnv *, jclass, jobjectArray);
+        (JNIEnv *, jclass, jobjectArray, jobject, jobject);
 
 #ifdef __cplusplus
 }
