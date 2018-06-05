@@ -6,9 +6,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.dyhdyh.ffmpeg.FFmpegJNI;
+import com.dyhdyh.ffmpeg.listener.OnFFmpegResultListener;
 
 import java.io.File;
 
@@ -28,8 +30,19 @@ public class MainActivity extends AppCompatActivity {
         File outputFile = new File(getExternalCacheDir(), "output.mp4");
         //FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
         FFmpegJNI.exec(new String[]{"ffmpeg",
-                "-ss", "00:00:00", "-t","00:00:04",
+                "-ss", "00:00:00", "-t", "00:00:04",
                 "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath()
+        }, new OnFFmpegResultListener() {
+            @Override
+            public void onSuccess(int code) {
+                Log.d("成功------>", code + "");
+            }
+
+            @Override
+            public void onError(int code) {
+                Log.d("失败------>", code + "");
+
+            }
         });
         //FFmpegJNI.exec("ffmpeg", "-formats");
 

@@ -2,7 +2,11 @@ package com.dyhdyh.ffmpeg;
 
 import android.util.Log;
 
-import java.io.UnsupportedEncodingException;
+import com.dyhdyh.ffmpeg.listener.OnFFmpegLoggerListener;
+import com.dyhdyh.ffmpeg.listener.OnFFmpegProgressListener;
+import com.dyhdyh.ffmpeg.listener.OnFFmpegResultListener;
+import com.dyhdyh.ffmpeg.listener.impl.SimpleFFmpegLoggerListener;
+import com.dyhdyh.ffmpeg.listener.impl.SimpleFFmpegProgressListener;
 
 /**
  * @author dengyuhan
@@ -14,24 +18,26 @@ public class FFmpegJNI {
         System.loadLibrary("ffmpeg-jni");
     }
 
-    public static int exec(String... command) {
-        return nativeExec(command, new OnFFmpegProgressListener() {
+    public static void exec(String[] command, OnFFmpegResultListener resultListener) {
+        int returnCode = nativeExec(command, new OnFFmpegProgressListener() {
 
             @Override
             public void onProgress(float progress) {
                 Log.d("onProgress-------->", progress + "--->");
             }
-        }, new OnFFmpegLoggerListener() {
+        }, new SimpleFFmpegProgressListener(new SimpleFFmpegLoggerListener(true)) {
             @Override
-            public void onPrint(int level, byte[] messageByteArray) {
-                try {
-                    Log.d("------------>", level+" "+new String(messageByteArray,"utf-8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+            protected void onProgress(boolean supportProgress, float progress) {
+                Log.d("----------->", supportProgress + " " + progress);
             }
-
         });
+        if (resultListener != null) {
+            if (returnCode == 0) {
+                resultListener.onSuccess(returnCode);
+            } else {
+                resultListener.onError(returnCode);
+            }
+        }
     }
 
     private native static int nativeExec(String[] command, OnFFmpegProgressListener progressListener, OnFFmpegLoggerListener loggerListener);

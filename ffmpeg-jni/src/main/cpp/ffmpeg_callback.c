@@ -16,13 +16,26 @@ void log_callback(int level, const char *message) {
         jmethodID onPrintID = (*env)->GetMethodID(env, clazz, "onPrint", "(I[B)V");
         if (onPrintID) {
             int len = strlen(message);
-            jbyteArray message_bytes = (*env)->NewByteArray(env, len);
-            (*env)->SetByteArrayRegion(env, message_bytes, 0, len,(jbyte *)message);
-            (*env)->CallVoidMethod(env, jcallback, onPrintID, (jint) level, message_bytes);
-            (*env)->DeleteLocalRef(env, message_bytes);
+            if (len > 0) {
+                jbyteArray message_bytes = (*env)->NewByteArray(env, len);
+                (*env)->SetByteArrayRegion(env, message_bytes, 0, len, (jbyte *) message);
+                (*env)->CallVoidMethod(env, jcallback, onPrintID, (jint) level, message_bytes);
+                (*env)->DeleteLocalRef(env, message_bytes);
+            }
         }
         (*env)->DeleteLocalRef(env, clazz);
     }
 
+}
+
+
+void test(const char *text) {
+    int len = strlen(text);
+    if (len > 0) {
+        jbyteArray text_bytes = (*env)->NewByteArray(env, len);
+        (*env)->SetByteArrayRegion(env, text_bytes, 0, len, (jbyte *) text);
+        (*env)->CallVoidMethod(env, jcallback, text_bytes);
+        (*env)->DeleteLocalRef(env, text_bytes);
+    }
 }
 
