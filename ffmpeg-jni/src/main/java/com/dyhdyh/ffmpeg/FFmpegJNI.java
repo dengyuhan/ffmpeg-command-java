@@ -19,24 +19,28 @@ public class FFmpegJNI {
     }
 
     public static void exec(String[] command, OnFFmpegResultListener resultListener) {
-        int returnCode = nativeExec(command, new OnFFmpegProgressListener() {
+        try {
+            int returnCode = nativeExec(command, new OnFFmpegProgressListener() {
 
-            @Override
-            public void onProgress(float progress) {
-                Log.d("onProgress-------->", progress + "--->");
+                @Override
+                public void onProgress(float progress) {
+                    Log.d("onProgress-------->", progress + "--->");
+                }
+            }, new SimpleFFmpegProgressListener(new SimpleFFmpegLoggerListener(true)) {
+                @Override
+                protected void onProgress(boolean supportProgress, float progress) {
+                    Log.d("----------->", supportProgress + " " + progress);
+                }
+            });
+            if (resultListener != null) {
+                if (returnCode == 0) {
+                    resultListener.onSuccess(returnCode);
+                } else {
+                    resultListener.onError(returnCode);
+                }
             }
-        }, new SimpleFFmpegProgressListener(new SimpleFFmpegLoggerListener(true)) {
-            @Override
-            protected void onProgress(boolean supportProgress, float progress) {
-                Log.d("----------->", supportProgress + " " + progress);
-            }
-        });
-        if (resultListener != null) {
-            if (returnCode == 0) {
-                resultListener.onSuccess(returnCode);
-            } else {
-                resultListener.onError(returnCode);
-            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

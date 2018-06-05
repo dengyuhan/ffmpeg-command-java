@@ -27,15 +27,3 @@ void log_callback(int level, const char *message) {
     }
 
 }
-
-
-void test(const char *text) {
-    int len = strlen(text);
-    if (len > 0) {
-        jbyteArray text_bytes = (*env)->NewByteArray(env, len);
-        (*env)->SetByteArrayRegion(env, text_bytes, 0, len, (jbyte *) text);
-        (*env)->CallVoidMethod(env, jcallback, text_bytes);
-        (*env)->DeleteLocalRef(env, text_bytes);
-    }
-}
-
