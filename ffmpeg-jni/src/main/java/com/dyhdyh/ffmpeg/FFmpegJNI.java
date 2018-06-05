@@ -2,6 +2,8 @@ package com.dyhdyh.ffmpeg;
 
 import android.util.Log;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * @author dengyuhan
  *         created 2018/6/1 14:36
@@ -21,8 +23,12 @@ public class FFmpegJNI {
             }
         }, new OnFFmpegLoggerListener() {
             @Override
-            public void onPrint(int level, String message) {
-                Log.d("------------>", level+" "+message);
+            public void onPrint(int level, byte[] messageByteArray) {
+                try {
+                    Log.d("------------>", level+" "+new String(messageByteArray,"utf-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
 
         });

@@ -6,5 +6,5 @@ package com.dyhdyh.ffmpeg;
  */
 public interface OnFFmpegLoggerListener {
 
-    void onPrint(int level, String message);
+    void onPrint(int level, byte[] messageByteArray);
 }

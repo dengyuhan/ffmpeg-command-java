@@ -116,6 +116,7 @@
 #include "cmdutils.h"
 
 #include "libavutil/avassert.h"
+#include "ffmpeg_callback.h"
 
 const char program_name[] = "ffmpeg";
 const int program_birth_year = 2000;
@@ -4577,15 +4578,14 @@ static void log_callback_null(void *ptr, int level, const char *fmt, va_list vl)
     static int is_atty;
     av_log_format_line(ptr, level, fmt, vl, line, sizeof(line), &print_prefix);
     strcpy(prev, line);
-    if (level <= AV_LOG_WARNING) {
-        AVLOGE("%s", line);
-    } else {
-        AVLOGD("%s", line);
-    }
+
+    log_callback(level, line);
+
 }
 
 //int main(int argc, char **argv)
 int run(int argc, char **argv) {
+
     av_log_set_callback(log_callback_null);
 
     int i, ret;

@@ -17,8 +17,8 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/com_dyhdyh_ffmpeg_FFmpegJNI.cpp
-             #src/main/cpp/ffmpeg_callback.cpp
+             src/main/cpp/com_dyhdyh_ffmpeg_FFmpegJNI.c
+             src/main/cpp/ffmpeg_callback.c
              src/main/cpp/cmdutils.c
              src/main/cpp/ffmpeg.c
              src/main/cpp/ffmpeg_filter.c
