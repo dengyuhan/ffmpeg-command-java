@@ -23,10 +23,11 @@ public abstract class SimpleFFmpegProgressListener implements OnFFmpegLoggerList
     }
 
     public SimpleFFmpegProgressListener(long sourceDuration) {
-        this.mSourceDuration = sourceDuration;
+        this(sourceDuration, null);
     }
 
-    public SimpleFFmpegProgressListener(OnFFmpegLoggerListener loggerListener) {
+    public SimpleFFmpegProgressListener(long sourceDuration, OnFFmpegLoggerListener loggerListener) {
+        this.mSourceDuration = sourceDuration;
         this.mLoggerListener = loggerListener;
     }
 
@@ -39,7 +40,7 @@ public abstract class SimpleFFmpegProgressListener implements OnFFmpegLoggerList
             String message = new String(messageByteArray);
             Float progress = getProgress(message, mSourceDuration);
             if (progress == null) {
-                onProgress(false, progress);
+                onProgress(false, 0f);
             } else {
                 onProgress(true, progress);
             }

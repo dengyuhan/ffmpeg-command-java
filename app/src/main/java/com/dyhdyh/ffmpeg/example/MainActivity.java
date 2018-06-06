@@ -10,9 +10,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.dyhdyh.ffmpeg.FFmpegJNI;
-import com.dyhdyh.ffmpeg.listener.OnFFmpegResultListener;
 
 import java.io.File;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     File testFile;
@@ -29,21 +33,33 @@ public class MainActivity extends AppCompatActivity {
     public void clickStart(View view) {
         File outputFile = new File(getExternalCacheDir(), "output.mp4");
         //FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        FFmpegJNI.exec(new String[]{"ffmpeg",
-                "-ss", "00:00:00", "-t", "00:00:04",
-                "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath()
-        }, new OnFFmpegResultListener() {
-            @Override
-            public void onSuccess(int code) {
-                Log.d("成功------>", code + "");
-            }
+        FFmpegJNI.getInstance()
+                .execObservable("ffmpeg",
+                        "-ss", "00:00:00", "-t", "00:00:04",
+                        "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-            @Override
-            public void onError(int code) {
-                Log.d("失败------>", code + "");
+                    }
 
-            }
-        });
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.d("------------>", "成功----->" + integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("------------>", "失败----->" + e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
         //FFmpegJNI.exec("ffmpeg", "-formats");
 
     }

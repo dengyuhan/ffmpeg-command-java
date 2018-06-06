@@ -1,12 +1,12 @@
 package com.dyhdyh.ffmpeg;
 
-import android.util.Log;
-
+import com.dyhdyh.ffmpeg.exception.FFmpegException;
 import com.dyhdyh.ffmpeg.listener.OnFFmpegLoggerListener;
-import com.dyhdyh.ffmpeg.listener.OnFFmpegProgressListener;
 import com.dyhdyh.ffmpeg.listener.OnFFmpegResultListener;
-import com.dyhdyh.ffmpeg.listener.impl.SimpleFFmpegLoggerListener;
-import com.dyhdyh.ffmpeg.listener.impl.SimpleFFmpegProgressListener;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 /**
  * @author dengyuhan
@@ -18,31 +18,71 @@ public class FFmpegJNI {
         System.loadLibrary("ffmpeg-jni");
     }
 
-    public static void exec(String[] command, OnFFmpegResultListener resultListener) {
-        try {
-            int returnCode = nativeExec(command, new OnFFmpegProgressListener() {
+    private static FFmpegJNI mInstance;
 
-                @Override
-                public void onProgress(float progress) {
-                    Log.d("onProgress-------->", progress + "--->");
-                }
-            }, new SimpleFFmpegProgressListener(new SimpleFFmpegLoggerListener(true)) {
-                @Override
-                protected void onProgress(boolean supportProgress, float progress) {
-                    Log.d("----------->", supportProgress + " " + progress);
-                }
-            });
-            if (resultListener != null) {
+    private FFmpegJNI() {
+    }
+
+    public static FFmpegJNI getInstance() {
+        synchronized (FFmpegJNI.class) {
+            if (mInstance == null) {
+                mInstance = new FFmpegJNI();
+            }
+        }
+        return mInstance;
+    }
+
+    private boolean mDebug;
+    private OnFFmpegLoggerListener mLoggerListener;
+    private OnFFmpegResultListener mResultListener;
+
+    public void setLoggerListener(OnFFmpegLoggerListener listener) {
+        this.mLoggerListener = listener;
+    }
+
+    public void setResultListener(OnFFmpegResultListener listener) {
+        this.mResultListener = listener;
+    }
+
+
+    public void exec(String... command) {
+        try {
+            int returnCode = nativeExec(command, mLoggerListener);
+            if (mResultListener != null) {
                 if (returnCode == 0) {
-                    resultListener.onSuccess(returnCode);
+                    mResultListener.onSuccess(returnCode);
                 } else {
-                    resultListener.onError(returnCode);
+                    mResultListener.onError(returnCode);
                 }
             }
-        }catch (Exception e){
+            mLoggerListener = null;
+            mResultListener = null;
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private native static int nativeExec(String[] command, OnFFmpegProgressListener progressListener, OnFFmpegLoggerListener loggerListener);
+
+    public Observable<Integer> execObservable(final String... command) {
+        return Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(final ObservableEmitter<Integer> emitter) throws Exception {
+                setResultListener(new OnFFmpegResultListener() {
+                    @Override
+                    public void onSuccess(int code) {
+                        emitter.onNext(code);
+                    }
+
+                    @Override
+                    public void onError(int code) {
+                        emitter.onError(new FFmpegException(String.valueOf(code)));
+                    }
+                });
+                exec(command);
+                emitter.onComplete();
+            }
+        });
+    }
+
+    private native static int nativeExec(String[] command, OnFFmpegLoggerListener loggerListener);
 }

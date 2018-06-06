@@ -11,6 +11,9 @@ void set_log_callback(JNIEnv *jniEnv, jobject obj) {
 }
 
 void log_callback(int level, const char *message) {
+    if (!jcallback) {
+        return;
+    }
     jclass clazz = (*env)->GetObjectClass(env, jcallback);
     if (clazz) {
         jmethodID onPrintID = (*env)->GetMethodID(env, clazz, "onPrint", "(I[B)V");

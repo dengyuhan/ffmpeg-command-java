@@ -8,8 +8,7 @@
 
 
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpeg_FFmpegJNI_nativeExec
-        (JNIEnv *env, jclass jcls, jobjectArray commands, jobject progressListener,
-         jobject loggerListener) {
+        (JNIEnv *env, jclass jcls, jobjectArray commands, jobject loggerListener) {
 
     set_log_callback(env, loggerListener);
 
@@ -20,6 +19,7 @@ JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpeg_FFmpegJNI_nativeExec
     for (i = 0; i < argc; i++) {
         jstring js = (jstring) (*env)->GetObjectArrayElement(env, commands, i);
         argv[i] = (char *) (*env)->GetStringUTFChars(env, js, 0);
+        (*env)->DeleteLocalRef(env, js);
     }
 
     return run(argc, argv);
