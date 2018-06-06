@@ -1,0 +1,45 @@
+ext {
+    android =
+            [
+                    applicationId    : "com.dyhdyh.ffmpeg.example",
+
+                    //版本号
+                    versionCode      : 2,
+                    versionName      : "1.0.0-beta1",
+
+                    //sdk版本
+                    compileSdkVersion: 27,
+                    buildToolsVersion: "27.0.3",
+                    minSdkVersion    : 19,
+                    targetSdkVersion : 27,
+                    supportVersion   : "27.1.1",
+            ]
+
+    jcenter =
+            [
+                    //项目名称
+                    name       : "ffmpeg-jni",
+                    groupId    : "com.dyhdyh",
+                    //项目地址
+                    siteUrl    : "https://github.com/dengyuhan/ffmpeg-command-java",
+                    //项目git地址
+                    gitUrl     : "https://github.com/dengyuhan/ffmpeg-command-java.git",
+                    //项目描述
+                    description: "java调用ffmpeg命令行",
+                    //开发者的一些基本信息
+                    authorId   : "dengyuhan",
+                    authorName : "dengyuhan",
+                    authorEmail: "22309946@qq.com",
+
+                    //开源协议
+                    licenses   : {
+                        license {
+                            name 'Apache-2.0'
+                            url 'https://opensource.org/licenses/Apache-2.0'
+                        }
+                    },
+                    licenseName: 'Apache-2.0'
+            ]
+
+
+}
