@@ -1,1 +1,1 @@
-include ':app', ':ffmpeg-jni'
+include ':example', ':ffmpeg-java', ':ffmpeg-armeabi-v7a', ':ffmpeg-native'

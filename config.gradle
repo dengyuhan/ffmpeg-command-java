@@ -1,11 +1,11 @@
 ext {
     android =
             [
-                    applicationId    : "com.dyhdyh.ffmpeg.example",
+                    applicationId    : "com.dyhdyh.ffmpegjni.example",
 
                     //版本号
-                    versionCode      : 2,
-                    versionName      : "1.0.0-beta1",
+                    versionCode      : 1,
+                    versionName      : "1.0.0-beta",
 
                     //sdk版本
                     compileSdkVersion: 27,
@@ -18,27 +18,28 @@ ext {
     jcenter =
             [
                     //项目名称
-                    name       : "ffmpeg-jni",
-                    groupId    : "com.dyhdyh",
+                    library_name      : "ffmpeg-jni-java",
+                    library_armeabi_v7: "ffmpeg-jni-armeabi-v7a",
+                    groupId           : "com.dyhdyh.ffmpegjni",
                     //项目地址
-                    siteUrl    : "https://github.com/dengyuhan/ffmpeg-command-java",
+                    siteUrl           : "https://github.com/dengyuhan/ffmpeg-jni",
                     //项目git地址
-                    gitUrl     : "https://github.com/dengyuhan/ffmpeg-command-java.git",
+                    gitUrl            : "https://github.com/dengyuhan/ffmpeg-jni.git",
                     //项目描述
-                    description: "java调用ffmpeg命令行",
+                    description       : "java调用ffmpeg命令行",
                     //开发者的一些基本信息
-                    authorId   : "dengyuhan",
-                    authorName : "dengyuhan",
-                    authorEmail: "22309946@qq.com",
+                    authorId          : "dengyuhan",
+                    authorName        : "dengyuhan",
+                    authorEmail       : "22309946@qq.com",
 
                     //开源协议
-                    licenses   : {
+                    licenses          : {
                         license {
                             name 'Apache-2.0'
                             url 'https://opensource.org/licenses/Apache-2.0'
                         }
                     },
-                    licenseName: 'Apache-2.0'
+                    licenseName       : 'Apache-2.0'
             ]
 
 

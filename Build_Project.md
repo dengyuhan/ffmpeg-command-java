@@ -10,5 +10,5 @@ export PATH=$ANDROID_NDK:$PATH
 工程内置了ffmpeg-3.2.9，首次编译需要在AS中执行一次build脚本  
 
 ```
-./ffmpeg-build/ffmpeg_configure.sh
+./ffmpeg-native/ffmpeg-build/ffmpeg_configure.sh
 ```
