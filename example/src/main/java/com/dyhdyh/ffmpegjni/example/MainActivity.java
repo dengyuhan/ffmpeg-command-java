@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         FFmpegJNI.getInstance()
                 .execObservable("ffmpeg",
                         "-ss", "00:00:00", "-t", "00:00:04",
-                        "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath())
+                        "-i", testFile.getAbsolutePath(), "-vcodec", "h264", "-acodec", "copy", "-y", outputFile.getAbsolutePath())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {

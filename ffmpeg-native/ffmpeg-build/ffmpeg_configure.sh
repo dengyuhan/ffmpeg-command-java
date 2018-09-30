@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #脚本执行的路径
 ffmpeg_name=ffmpeg-3.2.9
 run_path=$(cd `dirname $0`; pwd)
@@ -15,10 +16,16 @@ target_path=$run_path/$ffmpeg_name/build_android.sh
 cp build_android.sh $target_path
 echo "复制编译脚本--->"$target_path
 
+#编译x264并复制到ffmpeg文件夹
+#target_x264_path=$run_path/$ffmpeg_name/$x264_name
+#source ./x264_configure.sh
+#cp -r $run_path/$x264_name $target_x264_path
+
+#编译ffmpeg
 chmod -R +x $ffmpeg_name
 cd $ffmpeg_name
 
-./configure --disable-yasm
+./configure --disable-yasm --enable-libx264 --enable-gpl
 
 #编译FFmpeg
 ./build_android.sh

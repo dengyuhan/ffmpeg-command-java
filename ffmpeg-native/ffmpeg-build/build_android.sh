@@ -1,4 +1,5 @@
 #!/bin/bash
+x264_name=x264-snapshot-20170705-2245
 
 basepath=$(cd `dirname $0`; pwd)
 export TMPDIR=$basepath/ffmpegtemp #这句很重要，不然会报错 unable to create temporary file in
@@ -20,6 +21,10 @@ if [ ! -d $TMPDIR ]; then
   mkdir /$TMPDIR
 fi
 
+X264_INCLUDE=$basepath/$x264_name/android/arm/include
+
+X264_LIB=$basepath/$x264_name/android/arm/lib
+
 function build_one
 {
 ./configure \
@@ -28,6 +33,8 @@ function build_one
     --cross-prefix=$TOOLCHAIN/bin/arm-linux-androideabi- \
     --arch=arm \
     --sysroot=$PLATFORM \
+    --extra-cflags="-I$X264_INCLUDE" \
+    --extra-ldflags="-L$X264_LIB" \
     --extra-cflags="-I$PLATFORM/usr/include" \
     --cc=$TOOLCHAIN/bin/arm-linux-androideabi-gcc \
     --nm=$TOOLCHAIN/bin/arm-linux-androideabi-nm \
@@ -52,7 +59,11 @@ function build_one
 
     #启用就是精简 禁用就是完整
     #--disable-everything \
-		
+
+	#x264
+    --enable-libx264 \
+    --enable-decoder=h264 \
+    --enable-encoder=libx264 \
 
 $ADDITIONAL_CONFIGURE_FLAG
 sed -i '' 's/HAVE_LRINT 0/HAVE_LRINT 1/g' config.h
