@@ -49,7 +49,9 @@ function build_one
     --disable-avdevice \
     --disable-symver \
     --disable-stripping \
-    --disable-everything \
+
+    #启用就是精简 禁用就是完整
+    #--disable-everything \
 		
 
 $ADDITIONAL_CONFIGURE_FLAG

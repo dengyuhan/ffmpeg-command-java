@@ -29,6 +29,5 @@ android {
 }
 
 dependencies {
-    implementation project(':ffmpeg-armeabi-v7a')
     implementation project(':ffmpeg-java')
 }

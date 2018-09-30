@@ -1,5 +1,6 @@
 # 编译FFmpeg
 #### 建议使用本工程的环境 
+MacOS  
 [ffmpeg 3.2.9](https://github.com/FFmpeg/FFmpeg/archive/n3.2.9.zip)  
 [android-ndk-r12b-mac](https://dl.google.com/android/repository/android-ndk-r12b-darwin-x86_64.zip)
 
@@ -7,7 +8,7 @@
 
 ### 脚本自动编译
 ```
-./ffmpeg_configure.sh
+./ffmpeg-native/ffmpeg-build/ffmpeg_configure.sh
 ```
 
 ### 手动编译
