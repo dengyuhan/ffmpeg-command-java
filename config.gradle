@@ -4,8 +4,8 @@ ext {
                     applicationId    : "com.dyhdyh.ffmpegjni.example",
 
                     //版本号
-                    versionCode      : 1,
-                    versionName      : "1.0.0-beta",
+                    versionCode      : 2,
+                    versionName      : "1.0.0-beta2",
 
                     //sdk版本
                     compileSdkVersion: 27,

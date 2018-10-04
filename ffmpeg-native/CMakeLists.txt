@@ -28,16 +28,76 @@ add_library( # Sets the name of the library.
              src/main/cpp/ffmpeg_opt.c
              )
 add_library(
-            ffmpeg
+            avcodec
+            SHARED
+            IMPORTED
+            )
+add_library(
+            avfilter
+            SHARED
+            IMPORTED
+            )
+add_library(
+            avformat
+            SHARED
+            IMPORTED
+            )
+add_library(
+            avutil
+            SHARED
+            IMPORTED
+            )
+add_library(
+            swresample
+            SHARED
+            IMPORTED
+            )
+add_library(
+            swscale
+            SHARED
+            IMPORTED
+            )
+add_library(
+            fdk-aac
             SHARED
             IMPORTED
             )
 
 #if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
 set_target_properties(
-                ffmpeg
+                avcodec
                 PROPERTIES IMPORTED_LOCATION
-                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libffmpeg.so
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavcodec.so
+                )
+set_target_properties(
+                avfilter
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavfilter.so
+                )
+set_target_properties(
+                avformat
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavformat.so
+                )
+set_target_properties(
+                avutil
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libavutil.so
+                )
+set_target_properties(
+                swresample
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswresample.so
+                )
+set_target_properties(
+                swscale
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libswscale.so
+                )
+set_target_properties(
+                fdk-aac
+                PROPERTIES IMPORTED_LOCATION
+                ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a/libfdk-aac.so
                 )
 
 include_directories(
@@ -67,7 +127,13 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        ffmpeg-jni
-                       ffmpeg
+                       avcodec
+                       avfilter
+                       avformat
+                       avutil
+                       swresample
+                       swscale
+                       fdk-aac
 
                        # Links the target library to the log library
                        # included in the NDK.

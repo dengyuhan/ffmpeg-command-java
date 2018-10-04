@@ -8,6 +8,7 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dyhdyh.ffmpegjni.FFmpegJNI;
 
@@ -33,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
     public void clickStart(View view) {
         File outputFile = new File(getExternalCacheDir(), "output.mp4");
         //FFmpegJNI.exec("ffmpeg", "-i", testFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        String[] cutCmd = new String[]{"ffmpeg",
+                "-ss", "00:00:00", "-t", "00:00:04",
+                "-i", testFile.getAbsolutePath(), "-vcodec", "copy", "-acodec", "copy", "-y", outputFile.getAbsolutePath()};
         FFmpegJNI.getInstance()
-                .execObservable("ffmpeg",
-                        "-ss", "00:00:00", "-t", "00:00:04",
-                        "-i", testFile.getAbsolutePath(), "-vcodec", "h264", "-acodec", "copy", "-y", outputFile.getAbsolutePath())
+                .execObservable(cutCmd)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
@@ -47,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(Integer integer) {
+                        Toast.makeText(MainActivity.this, "成功", Toast.LENGTH_SHORT).show();
                         Log.d("------------>", "成功----->" + integer);
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Toast.makeText(MainActivity.this, "失败", Toast.LENGTH_SHORT).show();
                         Log.d("------------>", "失败----->" + e);
                     }
 

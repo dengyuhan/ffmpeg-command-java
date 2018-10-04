@@ -1,8 +1,12 @@
 package com.dyhdyh.ffmpegjni;
 
+import android.util.Log;
+
 import com.dyhdyh.ffmpegjni.exception.FFmpegException;
 import com.dyhdyh.ffmpegjni.listener.OnFFmpegLoggerListener;
 import com.dyhdyh.ffmpegjni.listener.OnFFmpegResultListener;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -14,7 +18,13 @@ import io.reactivex.ObservableOnSubscribe;
  */
 public class FFmpegJNI {
     static {
-        System.loadLibrary("ffmpeg");
+        System.loadLibrary("avcodec");
+        System.loadLibrary("avfilter");
+        System.loadLibrary("avformat");
+        System.loadLibrary("avutil");
+        System.loadLibrary("swresample");
+        System.loadLibrary("swscale");
+        System.loadLibrary("fdk-aac");
         System.loadLibrary("ffmpeg-jni");
     }
 
@@ -33,8 +43,13 @@ public class FFmpegJNI {
     }
 
     private boolean mDebug;
+    private final String TAG = getClass().getSimpleName();
     private OnFFmpegLoggerListener mLoggerListener;
     private OnFFmpegResultListener mResultListener;
+
+    public void setDebug(boolean debug) {
+        this.mDebug = debug;
+    }
 
     public void setLoggerListener(OnFFmpegLoggerListener listener) {
         this.mLoggerListener = listener;
@@ -44,9 +59,27 @@ public class FFmpegJNI {
         this.mResultListener = listener;
     }
 
+    public void exec(List<String> command) {
+        if (command != null) {
+            exec(command.toArray(new String[0]));
+        }
+    }
 
     public void exec(String... command) {
         try {
+            if (command == null || command.length <= 0) {
+                return;
+            }
+
+            if (mDebug) {
+                StringBuilder sb = new StringBuilder();
+                for (String item : command) {
+                    sb.append(item);
+                    sb.append(" ");
+                }
+                Log.d(TAG, sb.toString());
+            }
+
             int returnCode = nativeExec(command, mLoggerListener);
             if (mResultListener != null) {
                 if (returnCode == 0) {
