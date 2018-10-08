@@ -59,6 +59,13 @@ public class FFmpegJNI {
         this.mResultListener = listener;
     }
 
+
+    public void exec(FFmpegStringBuilder builder) {
+        if (builder != null) {
+            exec(builder.toArray());
+        }
+    }
+
     public void exec(List<String> command) {
         if (command != null) {
             exec(command.toArray(new String[0]));
@@ -71,6 +78,7 @@ public class FFmpegJNI {
                 return;
             }
 
+            final long startMillis = System.currentTimeMillis();
             if (mDebug) {
                 StringBuilder sb = new StringBuilder();
                 for (String item : command) {
@@ -81,6 +89,11 @@ public class FFmpegJNI {
             }
 
             int returnCode = nativeExec(command, mLoggerListener);
+
+            if (mDebug) {
+                Log.d(TAG, "耗时：" + (System.currentTimeMillis() - startMillis) + "ms");
+            }
+
             if (mResultListener != null) {
                 if (returnCode == 0) {
                     mResultListener.onSuccess(returnCode);
@@ -95,6 +108,13 @@ public class FFmpegJNI {
         }
     }
 
+    public Observable<Integer> execObservable(FFmpegStringBuilder builder) {
+        return execObservable(builder == null ? new String[0] : builder.toArray());
+    }
+
+    public Observable<Integer> execObservable(List<String> command) {
+        return execObservable(command == null ? new String[0] : command.toArray(new String[0]));
+    }
 
     public Observable<Integer> execObservable(final String... command) {
         return Observable.create(new ObservableOnSubscribe<Integer>() {
