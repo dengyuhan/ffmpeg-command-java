@@ -1,6 +1,6 @@
 #include <jni.h>
 
-void set_log_callback(JNIEnv *jniEnv, jobject jcallback);
+void set_log_callback(int debug);
 
 void log_callback(int level, const char *message);
 

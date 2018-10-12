@@ -1,33 +1,20 @@
-#include <string.h>
+#include <libavutil/log.h>
 #include "ffmpeg_callback.h"
 #include "android_log.h"
 
-JNIEnv *env;
-jobject jcallback;
+int isDebug;
 
-void set_log_callback(JNIEnv *jniEnv, jobject obj) {
-    jcallback = obj;
-    env = jniEnv;
+void set_log_callback(int debug) {
+    isDebug = debug;
 }
 
 void log_callback(int level, const char *message) {
-    //LOGD("%s",message);
-    if (!jcallback) {
-        return;
-    }
-    jclass clazz = (*env)->GetObjectClass(env, jcallback);
-    if (clazz) {
-        jmethodID onPrintID = (*env)->GetMethodID(env, clazz, "onPrint", "(I[B)V");
-        if (onPrintID) {
-            int len = strlen(message);
-            if (len > 0) {
-                jbyteArray message_bytes = (*env)->NewByteArray(env, len);
-                (*env)->SetByteArrayRegion(env, message_bytes, 0, len, (jbyte *) message);
-                (*env)->CallVoidMethod(env, jcallback, onPrintID, (jint) level, message_bytes);
-                (*env)->DeleteLocalRef(env, message_bytes);
-            }
+    if (isDebug != 0) {
+        if (level <= AV_LOG_WARNING) {
+            LOGE("%s", message);
+        } else {
+            LOGD("%s", message);
         }
-        (*env)->DeleteLocalRef(env, clazz);
     }
 
 }

@@ -36,13 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         testFile = new File(getExternalCacheDir(), "test.mp4");
         FileUtils.copyAssetFile(this, "test.mp4", testFile);
-
-        /*FFmpegJNI.getInstance().setLoggerListener(new OnFFmpegLoggerListener() {
-            @Override
-            public void onPrint(int level, byte[] messageByteArray) {
-                //Log.d("----->", new String(messageByteArray));
-            }
-        });*/
     }
 
 

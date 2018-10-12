@@ -45,7 +45,8 @@ public class FFmpegJNI {
         this.mDebug = debug;
     }
 
-    public void setLoggerListener(OnFFmpegLoggerListener listener) {
+    @Deprecated
+    private void setLoggerListener(OnFFmpegLoggerListener listener) {
         this.mLoggerListener = listener;
     }
 
@@ -82,7 +83,7 @@ public class FFmpegJNI {
                 Log.d(TAG, sb.toString());
             }
 
-            int returnCode = nativeExec(command, mLoggerListener);
+            int returnCode = nativeExec(command, mDebug);
 
             if (mDebug) {
                 Log.d(TAG, "耗时：" + (System.currentTimeMillis() - startMillis) + "ms");
@@ -131,7 +132,7 @@ public class FFmpegJNI {
         });
     }
 
-    private native static int nativeExec(String[] command, OnFFmpegLoggerListener loggerListener);
+    private native static int nativeExec(String[] command, boolean debug);
 
     public native static String avcodecInfo();
 

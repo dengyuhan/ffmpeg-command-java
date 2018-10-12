@@ -6,12 +6,13 @@
 #include "ffmpeg.h"
 #include "ffmpeg_callback.h"
 
-
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
-        (JNIEnv *env, jclass jcls, jobjectArray commands, jobject loggerListener) {
+        (JNIEnv *env, jclass jcls, jobjectArray commands, jboolean debug) {
+    if (debug == JNI_TRUE) {
+        set_log_callback(JNI_TRUE);
+    }
 
-    set_log_callback(env, loggerListener);
-
+    //执行命令行
     int argc = (*env)->GetArrayLength(env, commands);
     char *argv[argc];
 
@@ -21,25 +22,24 @@ JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
         argv[i] = (char *) (*env)->GetStringUTFChars(env, js, 0);
         (*env)->DeleteLocalRef(env, js);
     }
-
     return run(argc, argv);
 }
 
-JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv *env, jclass jcls){
-    char info[40000] = { 0 };
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv *env, jclass jcls) {
+    char info[40000] = {0};
 
     av_register_all();
 
     AVCodec *c_temp = av_codec_next(NULL);
 
-    while(c_temp!=NULL){
-        if (c_temp->decode!=NULL){
-            sprintf(info, "%s[Dec]", info);
+    while (c_temp != NULL) {
+        if (c_temp->decode != NULL) {
+            sprintf(info, "%s[Decoder]", info);
+        } else {
+            sprintf(info, "%s[Encoder]", info);
         }
-        else{
-            sprintf(info, "%s[Enc]", info);
-        }
-        switch (c_temp->type){
+        switch (c_temp->type) {
             case AVMEDIA_TYPE_VIDEO:
                 sprintf(info, "%s[Video]", info);
                 break;
@@ -53,37 +53,39 @@ JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv
         sprintf(info, "%s[%10s]\n", info, c_temp->name);
 
 
-        c_temp=c_temp->next;
+        c_temp = c_temp->next;
     }
     return (*env)->NewStringUTF(env, info);
 }
 
-JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avformatInfo(JNIEnv *env, jclass jcls){
-    char info[40000] = { 0 };
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avformatInfo(JNIEnv *env, jclass jcls) {
+    char info[40000] = {0};
 
     av_register_all();
 
     AVInputFormat *if_temp = av_iformat_next(NULL);
     AVOutputFormat *of_temp = av_oformat_next(NULL);
     //Input
-    while(if_temp!=NULL){
-        sprintf(info, "%s[In ][%10s]\n", info, if_temp->name);
-        if_temp=if_temp->next;
+    while (if_temp != NULL) {
+        sprintf(info, "%s[Input ][%10s]\n", info, if_temp->name);
+        if_temp = if_temp->next;
     }
     //Output
-    while (of_temp != NULL){
-        sprintf(info, "%s[Out][%10s]\n", info, of_temp->name);
+    while (of_temp != NULL) {
+        sprintf(info, "%s[Output][%10s]\n", info, of_temp->name);
         of_temp = of_temp->next;
     }
     return (*env)->NewStringUTF(env, info);
 }
 
-JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avfilterInfo(JNIEnv *env, jclass jcls){
-    char info[40000] = { 0 };
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avfilterInfo(JNIEnv *env, jclass jcls) {
+    char info[40000] = {0};
     avfilter_register_all();
-    AVFilter *f_temp = (AVFilter *)avfilter_next(NULL);
+    AVFilter *f_temp = (AVFilter *) avfilter_next(NULL);
     int i = 0;
-    while (f_temp != NULL){
+    while (f_temp != NULL) {
         sprintf(info, "%s[%10s]\n", info, f_temp->name);
         f_temp = f_temp->next;
     }
@@ -91,7 +93,8 @@ JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avfilterInfo(JNIEn
     return (*env)->NewStringUTF(env, info);
 }
 
-JNIEXPORT jstring JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_configurationInfo(JNIEnv *env, jclass jcls){
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_configurationInfo(JNIEnv *env, jclass jcls) {
     char info[10000] = {0};
     av_register_all();
 

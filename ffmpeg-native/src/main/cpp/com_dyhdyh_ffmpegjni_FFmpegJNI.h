@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ([Ljava/lang/String;Lcom/dyhdyh/ffmpegjni/OnFFmpegProgressListener;)I
  */
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
-        (JNIEnv *, jclass, jobjectArray, jobject);
+        (JNIEnv *, jclass, jobjectArray, jboolean);
 
 JNIEXPORT jstring JNICALL
 Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv *, jclass);
