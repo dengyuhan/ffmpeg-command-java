@@ -2,7 +2,7 @@
 
 ## 本工程使用的环境 
 MacOS 10.13.4  
-[android-ndk-r12b-mac](https://dl.google.com/android/repository/android-ndk-r12b-darwin-x86_64.zip)  
+[android-ndk-r14b-mac](https://dl.google.com/android/repository/android-ndk-r14b-darwin-x86_64.zip)  
 [ffmpeg 3.2.9](https://github.com/FFmpeg/FFmpeg/archive/n3.2.9.zip)  
 [fdk-aac-0.1.6](https://downloads.sourceforge.net/opencore-amr/fdk-aac-0.1.6.tar.gz)  
 [x264-snapshot-20170705-2245](http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20170705-2245.tar.bz2)  
@@ -40,3 +40,9 @@ export PATH=$ANDROID_NDK:$PATH
 
 >手动编译FFmpeg  
 [Build_FFmpeg.md](Build_FFmpeg.md)
+
+
+
+### 参考资料
+[FFmpeg4Android](https://github.com/mabeijianxi/FFmpeg4Android)  
+[编译FFmpeg成一个SO库](http://www.ihubin.com/blog/android-ffmpeg-demo-3)

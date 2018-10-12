@@ -11,6 +11,7 @@ void set_log_callback(JNIEnv *jniEnv, jobject obj) {
 }
 
 void log_callback(int level, const char *message) {
+    //LOGD("%s",message);
     if (!jcallback) {
         return;
     }

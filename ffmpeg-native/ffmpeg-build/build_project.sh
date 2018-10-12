@@ -26,7 +26,7 @@ echo 复制编译libx264脚本......
 fdk_aac_path=$ffmpeg_name/$fdk_aac_name
 if [ ! -d $fdk_aac_path ]; then
   echo 解压fdk_aac......
-  unzip -q $fdk_aac_name.zip -d $ffmpeg_name
+  tar -xf $fdk_aac_name.tar.gz -C $ffmpeg_name
 fi
 cp -r $fdk_aac_script_name $fdk_aac_path
 echo 复制编译fdk_aac脚本......
@@ -37,25 +37,12 @@ chmod -R +x $ffmpeg_name
 cd $ffmpeg_name
 
 cd $fdk_aac_name
-./configure
-make
-make install
-
 ./$fdk_aac_script_name
 
 cd ..
 
 cd $libx264_name
-./configure
-make
-make install
-
 ./$libx264_script_name
 
 cd ..
-
-./configure --disable-yasm --enable-libx264 --enable-gpl
-make
-make install
-
 ./$ffmpeg_script_name

@@ -10,14 +10,12 @@ import java.util.List;
  */
 public class FFmpegStringBuilder {
     private final String BEGINNING = "ffmpeg";
-    private final String REPLACE_FILE = "-y";
 
     private List<String> builds;
 
     public FFmpegStringBuilder() {
         builds = new ArrayList<>();
         builds.add(BEGINNING);
-        builds.add(REPLACE_FILE);
     }
 
     public FFmpegStringBuilder append(CharSequence s) {

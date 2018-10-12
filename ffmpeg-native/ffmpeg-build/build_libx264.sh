@@ -8,7 +8,6 @@ function build_one
 {
 ./configure \
 --prefix=$PREFIX \
---disable-shared \
 --enable-static \
 --disable-asm \
 --enable-pic \

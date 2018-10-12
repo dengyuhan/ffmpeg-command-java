@@ -15,6 +15,18 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
         (JNIEnv *, jclass, jobjectArray, jobject);
 
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv *, jclass);
+
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avformatInfo(JNIEnv *, jclass);
+
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avfilterInfo(JNIEnv *, jclass);
+
+JNIEXPORT jstring JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_configurationInfo(JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

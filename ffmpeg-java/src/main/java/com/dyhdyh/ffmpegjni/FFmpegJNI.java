@@ -18,13 +18,7 @@ import io.reactivex.ObservableOnSubscribe;
  */
 public class FFmpegJNI {
     static {
-        System.loadLibrary("avcodec");
-        System.loadLibrary("avfilter");
-        System.loadLibrary("avformat");
-        System.loadLibrary("avutil");
-        System.loadLibrary("swresample");
-        System.loadLibrary("swscale");
-        System.loadLibrary("fdk-aac");
+        System.loadLibrary("ffmpeg");
         System.loadLibrary("ffmpeg-jni");
     }
 
@@ -138,4 +132,12 @@ public class FFmpegJNI {
     }
 
     private native static int nativeExec(String[] command, OnFFmpegLoggerListener loggerListener);
+
+    public native static String avcodecInfo();
+
+    public native static String avformatInfo();
+
+    public native static String avfilterInfo();
+
+    public native static String configurationInfo();
 }

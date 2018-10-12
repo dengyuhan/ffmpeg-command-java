@@ -1,26 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
     android:padding="16dp">
 
     <Button
+        android:text="裁剪"
         android:id="@+id/btn_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="clickStart" />
+
+    <LinearLayout
+        android:layout_below="@id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickCodec"
+            android:text="codec" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickFormat"
+            android:text="format" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickFilter"
+            android:text="filter" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickConfig"
+            android:text="config" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/tv_log"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/btn_start" />
+            android:layout_height="wrap_content" />
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

@@ -20,8 +20,6 @@ TOOLCHAIN=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 
 CPU=arm
 
-echo $basepath
-
 FDK_INCLUDE=$basepath/$fdk_aac_name/android/$CPU/include
 
 FDK_LIB=$basepath/$fdk_aac_name/android/$CPU/lib
@@ -38,7 +36,9 @@ FF_CFLAGS="-O3 -Wall -pipe \
 -DANDROID  "
 PREFIX=./android_more/$CPU
 
-rm "./compat/strtod.o"
+if [ -f compat/strtod.o ]; then
+  rm "./compat/strtod.o"
+fi
 
 build_one(){
 ./configure \
@@ -56,8 +56,8 @@ build_one(){
 --extra-cflags="-I$X264_INCLUDE  -I$FDK_INCLUDE " \
 --extra-ldflags="-L$FDK_LIB -L$X264_LIB" \
 --enable-gpl \
---enable-shared \
---disable-static \
+--disable-shared \
+--enable-static \
 --enable-version3 \
 --enable-pthreads \
 --enable-small \
@@ -67,12 +67,12 @@ build_one(){
 --enable-libx264 \
 --enable-neon \
 --enable-yasm \
+--enable-nonfree \
 --enable-libfdk_aac \
 --enable-encoder=libx264 \
 --enable-encoder=libfdk_aac \
 --enable-encoder=mjpeg \
 --enable-encoder=png \
---enable-nonfree \
 --enable-muxers \
 --enable-decoders \
 --enable-demuxers \
@@ -98,9 +98,23 @@ build_one(){
 }
 build_one
 
-
 make clean
 make -j16
 make install
 
-cp $FDK_LIB/libfdk-aac.so $PREFIX/lib
+$TOOLCHAIN/bin/arm-linux-androideabi-ld \
+-rpath-link=$PLATFORM/usr/lib \
+-L$PLATFORM/usr/lib \
+-L$PREFIX/lib \
+-soname libffmpeg.so -shared -nostdlib -Bsymbolic --whole-archive --no-undefined -o \
+$PREFIX/libffmpeg.so \
+    $FDK_LIB/libfdk-aac.so \
+    $X264_LIB/libx264.a \
+    libavcodec/libavcodec.a \
+    libavfilter/libavfilter.a \
+    libswresample/libswresample.a \
+    libavformat/libavformat.a \
+    libavutil/libavutil.a \
+    libswscale/libswscale.a \
+    -lc -lm -lz -ldl -llog --dynamic-linker=/system/bin/linker \
+    $TOOLCHAIN/lib/gcc/arm-linux-androideabi/4.9.x/libgcc.a \
