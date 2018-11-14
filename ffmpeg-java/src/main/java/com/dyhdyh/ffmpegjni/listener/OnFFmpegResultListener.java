@@ -7,5 +7,5 @@ package com.dyhdyh.ffmpegjni.listener;
 public interface OnFFmpegResultListener {
     void onSuccess(int code);
 
-    void onError(int code);
+    void onError(Exception e);
 }

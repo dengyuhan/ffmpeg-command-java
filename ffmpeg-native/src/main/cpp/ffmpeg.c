@@ -1623,6 +1623,7 @@ static void print_report(int is_last_report, int64_t timer_start, int64_t cur_ti
     static int64_t last_time = -1;
     static int qp_histogram[52];
     int hours, mins, secs, us;
+    long cur_us;
     int ret;
     float t;
 
@@ -1729,6 +1730,7 @@ static void print_report(int is_last_report, int64_t timer_start, int64_t cur_ti
 
     secs = FFABS(pts) / AV_TIME_BASE;
     us = FFABS(pts) % AV_TIME_BASE;
+    cur_us = secs * AV_TIME_BASE + us;
     mins = secs / 60;
     secs %= 60;
     hours = mins / 60;
@@ -1748,6 +1750,8 @@ static void print_report(int is_last_report, int64_t timer_start, int64_t cur_ti
     snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf),
              "%02d:%02d:%02d.%02d ", hours, mins, secs,
              (100 * us) / AV_TIME_BASE);
+
+    progress_callback(cur_us);
 
     if (bitrate < 0) {
         snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "bitrate=N/A");

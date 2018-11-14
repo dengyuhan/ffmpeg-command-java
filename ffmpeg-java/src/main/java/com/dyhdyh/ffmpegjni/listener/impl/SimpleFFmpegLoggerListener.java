@@ -6,12 +6,12 @@ import com.dyhdyh.ffmpegjni.listener.OnFFmpegLoggerListener;
 
 /**
  * @author dengyuhan
- *         created 2018/6/5 22:58
+ * created 2018/6/5 22:58
  */
 public class SimpleFFmpegLoggerListener implements OnFFmpegLoggerListener {
-    private final String TAG = "FFmpeg-JNI";
+    private final String TAG = "FFmpegJNI";
 
-    private boolean mLoggerEnable = true;
+    private boolean mLoggerEnable;
 
     public SimpleFFmpegLoggerListener(boolean loggerEnable) {
         this.mLoggerEnable = loggerEnable;
@@ -19,18 +19,20 @@ public class SimpleFFmpegLoggerListener implements OnFFmpegLoggerListener {
 
     @Override
     public void onPrint(int level, byte[] messageByteArray) {
-        String message = new String(messageByteArray);
-        onPrintMessage(level, message);
+        if (mLoggerEnable) {
+            String message = new String(messageByteArray);
+            onPrintMessage(level, message);
+        }
     }
 
     public void onPrintMessage(int level, String message) {
-        if (mLoggerEnable) {
-            if (level <= AV_LOG_WARNING) {
-                Log.e(TAG, message);
-            } else {
-                Log.d(TAG, message);
-            }
+        String tag = String.format("%s - %s", TAG, Thread.currentThread().getName());
+        if (level <= AV_LOG_WARNING) {
+            Log.e(tag, message);
+        } else {
+            Log.d(tag, message);
         }
     }
+
 
 }

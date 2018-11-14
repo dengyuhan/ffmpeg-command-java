@@ -29,7 +29,6 @@ dependencies {
     implementation 'com.dyhdyh.rxjava:subscribers:1.0.0-beta9'
     implementation 'com.dyhdyh.rxjava:subscribers-loadingbar:1.0.0-beta9'
     implementation 'com.dyhdyh.loadingbar:loadingbar:1.4.7'
-
     implementation project(':ffmpeg-java')
     implementation project(':ffmpeg-native')
 }

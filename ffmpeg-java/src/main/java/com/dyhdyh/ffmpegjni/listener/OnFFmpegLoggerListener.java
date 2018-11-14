@@ -55,5 +55,5 @@ public interface OnFFmpegLoggerListener {
      */
     int AV_LOG_TRACE = 56;
 
-    void onPrint(int level, byte[] messageByteArray);
+    void onPrint(int level, byte[] message);
 }

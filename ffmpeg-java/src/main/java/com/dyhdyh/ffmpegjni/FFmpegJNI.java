@@ -1,9 +1,11 @@
 package com.dyhdyh.ffmpegjni;
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.dyhdyh.ffmpegjni.exception.FFmpegException;
 import com.dyhdyh.ffmpegjni.listener.OnFFmpegLoggerListener;
+import com.dyhdyh.ffmpegjni.listener.OnFFmpegProgressListener;
 import com.dyhdyh.ffmpegjni.listener.OnFFmpegResultListener;
 
 import java.util.List;
@@ -14,17 +16,18 @@ import io.reactivex.ObservableOnSubscribe;
 
 /**
  * @author dengyuhan
- *         created 2018/6/1 14:36
+ * created 2018/6/1 14:36
  */
 public class FFmpegJNI {
+
     static {
         System.loadLibrary("ffmpeg");
         System.loadLibrary("ffmpeg-jni");
     }
 
-    private static FFmpegJNI mInstance;
 
     private FFmpegJNI() {
+        mMainHandler = new Handler();
     }
 
     public static FFmpegJNI getInstance() {
@@ -36,8 +39,12 @@ public class FFmpegJNI {
         return mInstance;
     }
 
+    private static FFmpegJNI mInstance;
+
     private boolean mDebug;
-    private final String TAG = getClass().getSimpleName();
+    private final String TAG = "FFmpegJNI";
+    private Handler mMainHandler;
+    private OnFFmpegProgressListener mProgressListener;
     private OnFFmpegLoggerListener mLoggerListener;
     private OnFFmpegResultListener mResultListener;
 
@@ -45,15 +52,32 @@ public class FFmpegJNI {
         this.mDebug = debug;
     }
 
-    @Deprecated
-    private void setLoggerListener(OnFFmpegLoggerListener listener) {
+    public FFmpegJNI setLoggerListener(OnFFmpegLoggerListener listener) {
         this.mLoggerListener = listener;
+        nativeSetLoggerListener(mLoggerListener);
+        return this;
     }
 
-    public void setResultListener(OnFFmpegResultListener listener) {
+    public FFmpegJNI setResultListener(OnFFmpegResultListener listener) {
         this.mResultListener = listener;
+        return this;
     }
 
+    public FFmpegJNI setOnProgressListener(OnFFmpegProgressListener listener) {
+        this.mProgressListener = listener;
+        nativeSetProgressListener(new OnFFmpegProgressListener() {
+            @Override
+            public void onProgress(float progressMillisecond) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressListener.onProgress(progressMillisecond);
+                    }
+                });
+            }
+        });
+        return this;
+    }
 
     public void exec(FFmpegStringBuilder builder) {
         if (builder != null) {
@@ -83,7 +107,7 @@ public class FFmpegJNI {
                 Log.d(TAG, sb.toString());
             }
 
-            int returnCode = nativeExec(command, mDebug);
+            int returnCode = nativeExec(command);
 
             if (mDebug) {
                 Log.d(TAG, "耗时：" + (System.currentTimeMillis() - startMillis) + "ms");
@@ -93,13 +117,15 @@ public class FFmpegJNI {
                 if (returnCode == 0) {
                     mResultListener.onSuccess(returnCode);
                 } else {
-                    mResultListener.onError(returnCode);
+                    mResultListener.onError(new FFmpegException(returnCode));
                 }
             }
-            mLoggerListener = null;
-            mResultListener = null;
+
+            release();
         } catch (Exception e) {
-            e.printStackTrace();
+            if (mResultListener != null) {
+                mResultListener.onError(e);
+            }
         }
     }
 
@@ -114,7 +140,7 @@ public class FFmpegJNI {
     public Observable<Integer> execObservable(final String... command) {
         return Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
-            public void subscribe(final ObservableEmitter<Integer> emitter) throws Exception {
+            public void subscribe(final ObservableEmitter<Integer> emitter) {
                 setResultListener(new OnFFmpegResultListener() {
                     @Override
                     public void onSuccess(int code) {
@@ -122,17 +148,49 @@ public class FFmpegJNI {
                     }
 
                     @Override
-                    public void onError(int code) {
-                        emitter.onError(new FFmpegException(String.valueOf(code)));
+                    public void onError(Exception e) {
+                        emitter.onError(e);
                     }
-                });
-                exec(command);
+                }).exec(command);
                 emitter.onComplete();
             }
         });
     }
 
-    private native static int nativeExec(String[] command, boolean debug);
+    protected void release() {
+        mLoggerListener = null;
+        mProgressListener = null;
+        mResultListener = null;
+        nativeRelease();
+    }
+
+
+    /**
+     * 命令行执行
+     *
+     * @param command
+     * @return
+     */
+    private native static int nativeExec(String[] command);
+
+    /**
+     * 日志监听
+     *
+     * @param listener
+     */
+    private native static void nativeSetLoggerListener(OnFFmpegLoggerListener listener);
+
+    /**
+     * 进度监听
+     *
+     * @param listener
+     */
+    private native static void nativeSetProgressListener(OnFFmpegProgressListener listener);
+
+    /**
+     * 释放
+     */
+    private native static void nativeRelease();
 
     public native static String avcodecInfo();
 

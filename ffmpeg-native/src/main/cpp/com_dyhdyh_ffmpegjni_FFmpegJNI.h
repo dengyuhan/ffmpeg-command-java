@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ([Ljava/lang/String;Lcom/dyhdyh/ffmpegjni/OnFFmpegProgressListener;)I
  */
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
-        (JNIEnv *, jclass, jobjectArray, jboolean);
+        (JNIEnv *, jclass, jobjectArray);
 
 JNIEXPORT jstring JNICALL
 Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avcodecInfo(JNIEnv *, jclass);
@@ -26,6 +26,20 @@ Java_com_dyhdyh_ffmpegjni_FFmpegJNI_avfilterInfo(JNIEnv *, jclass);
 
 JNIEXPORT jstring JNICALL
 Java_com_dyhdyh_ffmpegjni_FFmpegJNI_configurationInfo(JNIEnv *, jclass);
+
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeSetLoggerListener(JNIEnv *, jclass, jobject);
+
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeSetProgressListener(JNIEnv *, jclass, jobject);
+
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeRelease(JNIEnv *, jclass);
+
+void callback_java_progress(float progressMS);
+
+void callback_java_log(int level, const char *message);
+
 
 #ifdef __cplusplus
 }

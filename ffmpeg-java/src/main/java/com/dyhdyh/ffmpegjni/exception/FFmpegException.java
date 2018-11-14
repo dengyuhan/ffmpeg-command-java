@@ -2,22 +2,18 @@ package com.dyhdyh.ffmpegjni.exception;
 
 /**
  * @author dengyuhan
- *         created 2018/6/6 00:02
+ * created 2018/6/6 00:02
  */
-public class FFmpegException extends Exception{
-    public FFmpegException() {
+public class FFmpegException extends Exception {
+    private int code;
+
+    public FFmpegException(int code) {
+        super("ffmpeg error , code = " + code);
+        this.code = code;
     }
 
-    public FFmpegException(String message) {
-        super(message);
-    }
-
-    public FFmpegException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public FFmpegException(Throwable cause) {
-        super(cause);
+    public int getCode() {
+        return code;
     }
 
 }

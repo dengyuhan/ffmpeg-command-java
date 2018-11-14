@@ -12,7 +12,8 @@ public class CustomLoggerListener extends SimpleFFmpegLoggerListener{
     }
 
     @Override
-    public void onPrintMessage(int level, String message) {
-        //自定义要做的事情
+    public void onPrint(int level, byte[] messageByteArray) {
+        super.onPrint(level, messageByteArray);
     }
+
 }

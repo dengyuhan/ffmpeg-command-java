@@ -5,12 +5,18 @@
 #include <jni.h>
 #include "ffmpeg.h"
 #include "ffmpeg_callback.h"
+#include <libavutil/log.h>
+#include "android_log.h"
+
+//java虚拟机
+JavaVM *jvm = NULL;
+//日志监听的对象
+jobject g_logger_object = NULL;
+//进度监听的对象
+jobject g_progress_object = NULL;
 
 JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
-        (JNIEnv *env, jclass jcls, jobjectArray commands, jboolean debug) {
-    if (debug == JNI_TRUE) {
-        set_log_callback(JNI_TRUE);
-    }
+        (JNIEnv *env, jclass jcls, jobjectArray commands) {
 
     //执行命令行
     int argc = (*env)->GetArrayLength(env, commands);
@@ -23,6 +29,37 @@ JNIEXPORT jint JNICALL Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeExec
         (*env)->DeleteLocalRef(env, js);
     }
     return run(argc, argv);
+}
+
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeSetLoggerListener(JNIEnv *env, jclass jcls,
+                                                            jobject listener) {
+    (*env)->GetJavaVM(env, &jvm);
+
+    g_logger_object = (*env)->NewGlobalRef(env, listener);
+}
+
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeSetProgressListener(JNIEnv *env, jclass jcls,
+                                                              jobject listener) {
+    (*env)->GetJavaVM(env, &jvm);
+
+    g_progress_object = (*env)->NewGlobalRef(env, listener);
+}
+
+
+/**
+ * 释放资源
+ */
+JNIEXPORT void JNICALL
+Java_com_dyhdyh_ffmpegjni_FFmpegJNI_nativeRelease(JNIEnv *env, jclass jcls) {
+    if (g_logger_object != NULL) {
+        (*env)->DeleteGlobalRef(env, g_logger_object);
+    }
+    if (g_logger_object != NULL) {
+        (*env)->DeleteGlobalRef(env, g_progress_object);
+    }
+
 }
 
 JNIEXPORT jstring JNICALL
@@ -100,6 +137,61 @@ Java_com_dyhdyh_ffmpegjni_FFmpegJNI_configurationInfo(JNIEnv *env, jclass jcls) 
 
     sprintf(info, "%s\n", avcodec_configuration());
 
-    //LOGE("%s", info);
     return (*env)->NewStringUTF(env, info);
+}
+
+/**
+ * 把进度回调到java(毫秒)
+ */
+void callback_java_progress(float cur_ms) {
+    JNIEnv *env;
+    (*jvm)->GetEnv(jvm, (void **) &env, JNI_VERSION_1_4);
+
+    if (g_progress_object == NULL) {
+        return;
+    }
+    jclass progress_class = (*env)->GetObjectClass(env, g_progress_object);
+    jmethodID methodID = (*env)->GetMethodID(env, progress_class, "onProgress", "(F)V");
+    if (methodID == NULL) {
+        return;
+    }
+    (*env)->CallVoidMethod(env, g_progress_object, methodID, cur_ms);
+}
+
+
+void callback_java_log(int level, const char *message) {
+    if (g_logger_object == NULL) {
+        return;
+    }
+    JNIEnv *env = NULL;
+    int status;
+    int isAttached = 0;
+    status = (*jvm)->GetEnv(jvm, (void **) &env, JNI_VERSION_1_4);
+    if (status < 0) {
+        //将当前线程注册到虚拟机中
+        if ((*jvm)->AttachCurrentThread(jvm, &env, NULL)) {
+            return;
+        }
+        isAttached = 1;
+    }
+
+    jclass logger_class = (*env)->GetObjectClass(env, g_logger_object);
+    jmethodID methodID = (*env)->GetMethodID(env, logger_class, "onPrint", "(I[B)V");
+    if (methodID == NULL) {
+        return;
+    }
+    int len = strlen(message);
+    if (len > 0) {
+        jbyteArray message_bytes = (*env)->NewByteArray(env, len);
+        (*env)->SetByteArrayRegion(env, message_bytes, 0, len, (jbyte *) message);
+
+        (*env)->CallVoidMethod(env, g_logger_object, methodID, (jint) level, message_bytes);
+
+        (*env)->DeleteLocalRef(env, message_bytes);
+    }
+    (*env)->DeleteLocalRef(env, logger_class);
+
+    if (isAttached) {
+        (*jvm)->DetachCurrentThread(jvm);
+    }
 }
